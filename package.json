@@ -41,7 +41,11 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build",
+    "release": "./scripts/release.sh",
+    "release:patch": "./scripts/release.sh patch",
+    "release:minor": "./scripts/release.sh minor",
+    "release:major": "./scripts/release.sh major"
   },
   "peerDependencies": {
     "@hookform/resolvers": ">=3.0.0",

@@ -1,7 +1,7 @@
 import type { DemoConfig } from './types';
 
 export function generateInstallCode(): string {
-  return `npm install react react-dom react-hook-form @hookform/resolvers zod @snowpact/react-rhf-zod-form`;
+  return `npm install react-hook-form @hookform/resolvers zod @snowpact/react-rhf-zod-form`;
 }
 
 export function generateSetupCode(): string {

@@ -19,6 +19,7 @@
    ============================================================================= */
 
 :root {
+  --snow-input-background: #ffffff;
   --snow-input-foreground: #0a0a0a;
   --snow-input-placeholder: #9ca3af;
   --snow-input-border: #e5e5e5;
@@ -83,7 +84,7 @@
   line-height: 1.5;
   border: 1px solid var(--snow-input-border);
   border-radius: var(--snow-input-radius);
-  background: inherit;
+  background: var(--snow-input-background);
   color: var(--snow-input-foreground);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;

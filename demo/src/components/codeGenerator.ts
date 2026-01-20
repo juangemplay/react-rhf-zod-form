@@ -93,6 +93,7 @@ export function generateThemeCode(): string {
   return `/* Add to your global CSS file (e.g., globals.css, index.css) */
 
 :root {
+  --snow-input-background: #ffffff;
   --snow-input-foreground: #0a0a0a;
   --snow-input-placeholder: #9ca3af;
   --snow-input-border: #e5e5e5;
@@ -105,6 +106,7 @@ export function generateThemeCode(): string {
 
 /* Dark mode example */
 .dark {
+  --snow-input-background: #1a1a2e;
   --snow-input-foreground: #eaeaea;
   --snow-input-placeholder: #6b7280;
   --snow-input-border: #0f3460;

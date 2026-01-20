@@ -14,6 +14,7 @@ export interface DemoConfig {
 
 export interface ThemeColors {
   background: string;
+  inputBackground: string;
   foreground: string;
   disabledBackground: string;
   placeholder: string;
@@ -27,6 +28,7 @@ export interface ThemeColors {
 export const themes: Record<string, ThemeColors> = {
   default: {
     background: '#ffffff',
+    inputBackground: '#ffffff',
     foreground: '#0a0a0a',
     disabledBackground: '#f5f5f5',
     placeholder: '#9ca3af',
@@ -38,6 +40,7 @@ export const themes: Record<string, ThemeColors> = {
   },
   dark: {
     background: '#1a1a2e',
+    inputBackground: '#1a1a2e',
     foreground: '#eaeaea',
     disabledBackground: '#16213e',
     placeholder: '#6b7280',
@@ -49,6 +52,7 @@ export const themes: Record<string, ThemeColors> = {
   },
   ocean: {
     background: '#f0f9ff',
+    inputBackground: '#ffffff',
     foreground: '#0c4a6e',
     disabledBackground: '#e0f2fe',
     placeholder: '#7dd3fc',
@@ -60,6 +64,7 @@ export const themes: Record<string, ThemeColors> = {
   },
   forest: {
     background: '#f0fdf4',
+    inputBackground: '#ffffff',
     foreground: '#14532d',
     disabledBackground: '#dcfce7',
     placeholder: '#86efac',
@@ -71,6 +76,7 @@ export const themes: Record<string, ThemeColors> = {
   },
   sunset: {
     background: '#fff7ed',
+    inputBackground: '#ffffff',
     foreground: '#9a3412',
     disabledBackground: '#ffedd5',
     placeholder: '#fdba74',

@@ -66,6 +66,7 @@ export function App() {
   useEffect(() => {
     const theme = themes[currentTheme];
     const root = document.documentElement;
+    root.style.setProperty('--snow-input-background', theme.inputBackground);
     root.style.setProperty('--snow-input-foreground', theme.foreground);
     root.style.setProperty('--snow-input-placeholder', theme.placeholder);
     root.style.setProperty('--snow-input-border', theme.border);

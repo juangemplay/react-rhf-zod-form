@@ -255,52 +255,71 @@ function SetupProvider({ children }) {
 }
 ```
 
-## CSS Variables
+## Styling
 
-The default styles use CSS variables for easy customization:
+### Importing Styles
+
+```tsx
+import '@snowpact/react-rhf-zod-form/styles.css';
+```
+
+### CSS Variables
+
+Customize the form appearance by overriding CSS variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `--snow-input-background` | Input background color | `#ffffff` |
+| `--snow-input-foreground` | Text color for labels and inputs | `#0a0a0a` |
+| `--snow-input-placeholder` | Placeholder and description text | `#9ca3af` |
+| `--snow-input-border` | Input border color | `#e5e5e5` |
+| `--snow-input-active-ring` | Focus ring color | `#3b82f6` |
+| `--snow-input-disabled-background` | Disabled input background | `#f5f5f5` |
+| `--snow-input-radius` | Border radius | `0.375rem` |
+| `--snow-input-error` | Error text and border color | `#ef4444` |
+| `--snow-form-submit-btn-background` | Submit button background | `#3b82f6` |
+
+#### Example: Custom Theme
 
 ```css
 :root {
-  --snow-input-foreground: #0a0a0a;
-  --snow-input-placeholder: #9ca3af;
-  --snow-input-border: #e5e5e5;
-  --snow-input-active-ring: #3b82f6;
-  --snow-input-disabled-background: #f5f5f5;
-  --snow-input-radius: 0.375rem;
-  --snow-input-error: #ef4444;
-  --snow-form-submit-btn-background: #3b82f6;
+  --snow-input-active-ring: #8b5cf6;
+  --snow-form-submit-btn-background: #8b5cf6;
+  --snow-input-radius: 0.5rem;
 }
+```
 
-/* Dark mode */
+#### Example: Dark Mode
+
+```css
 .dark {
+  --snow-input-background: #1a1a2e;
   --snow-input-foreground: #eaeaea;
   --snow-input-placeholder: #6b7280;
   --snow-input-border: #0f3460;
-  --snow-input-active-ring: #3b82f6;
   --snow-input-disabled-background: #16213e;
   --snow-input-error: #f87171;
-  --snow-form-submit-btn-background: #3b82f6;
 }
 ```
 
 ### CSS Classes
 
-The library uses semantic class names:
+The library uses semantic class names for custom styling:
 
-| Class                    | Description      |
-| ------------------------ | ---------------- |
-| `.snow-form`             | Form container   |
-| `.snow-form-item`        | Field wrapper    |
-| `.snow-form-label`       | Field label      |
+| Class | Description |
+|-------|-------------|
+| `.snow-form` | Form container |
+| `.snow-form-item` | Field wrapper |
+| `.snow-form-label` | Field label |
 | `.snow-form-label-error` | Label with error |
-| `.snow-form-description` | Help text        |
-| `.snow-form-message`     | Error message    |
-| `.snow-input`            | Input fields     |
-| `.snow-textarea`         | Textarea         |
-| `.snow-select`           | Select dropdown  |
-| `.snow-checkbox`         | Checkbox         |
-| `.snow-radio`            | Radio buttons    |
-| `.snow-form-submit-btn`              | Submit button      |
+| `.snow-form-description` | Help text |
+| `.snow-form-message` | Error message |
+| `.snow-input` | Text inputs |
+| `.snow-textarea` | Textarea |
+| `.snow-select` | Select dropdown |
+| `.snow-checkbox` | Checkbox |
+| `.snow-radio` | Radio buttons |
+| `.snow-form-submit-btn` | Submit button |
 
 ## Schema Refinements
 

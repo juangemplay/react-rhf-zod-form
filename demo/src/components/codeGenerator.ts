@@ -100,6 +100,7 @@ export function generateThemeCode(): string {
   --snow-input-disabled-background: #f5f5f5;
   --snow-input-radius: 0.375rem;
   --snow-input-error: #ef4444;
+  --snow-form-submit-btn-background: #3b82f6;
 }
 
 /* Dark mode example */
@@ -110,6 +111,7 @@ export function generateThemeCode(): string {
   --snow-input-active-ring: #3b82f6;
   --snow-input-disabled-background: #16213e;
   --snow-input-error: #f87171;
+  --snow-form-submit-btn-background: #3b82f6;
 }`;
 }
 

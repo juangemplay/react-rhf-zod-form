@@ -260,7 +260,7 @@ export function SnowForm<TSchema extends ZodObjectOrEffects, TResponse = unknown
         <SubmitButton
           loading={isSubmitting}
           disabled={isDisabled}
-          className={cn('snow-btn snow-btn-primary', options?.className)}
+          className={cn('snow-form-submit-btn', options?.className)}
         >
           {options?.children ?? t('snowForm.submit')}
         </SubmitButton>

@@ -21,6 +21,7 @@ export interface ThemeColors {
   ring: string;
   error: string;
   radius: string;
+  btnBackground: string;
 }
 
 export const themes: Record<string, ThemeColors> = {
@@ -33,6 +34,7 @@ export const themes: Record<string, ThemeColors> = {
     ring: '#3b82f6',
     error: '#ef4444',
     radius: '0.375rem',
+    btnBackground: '#3b82f6',
   },
   dark: {
     background: '#1a1a2e',
@@ -43,6 +45,7 @@ export const themes: Record<string, ThemeColors> = {
     ring: '#3b82f6',
     error: '#f87171',
     radius: '0.375rem',
+    btnBackground: '#3b82f6',
   },
   ocean: {
     background: '#f0f9ff',
@@ -53,6 +56,7 @@ export const themes: Record<string, ThemeColors> = {
     ring: '#0284c7',
     error: '#ef4444',
     radius: '0.5rem',
+    btnBackground: '#0284c7',
   },
   forest: {
     background: '#f0fdf4',
@@ -63,6 +67,7 @@ export const themes: Record<string, ThemeColors> = {
     ring: '#22c55e',
     error: '#ef4444',
     radius: '0.5rem',
+    btnBackground: '#22c55e',
   },
   sunset: {
     background: '#fff7ed',
@@ -73,5 +78,6 @@ export const themes: Record<string, ThemeColors> = {
     ring: '#ea580c',
     error: '#dc2626',
     radius: '0.25rem',
+    btnBackground: '#ea580c',
   },
 };

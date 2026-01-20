@@ -73,6 +73,7 @@ export function App() {
     root.style.setProperty('--snow-input-disabled-background', theme.disabledBackground);
     root.style.setProperty('--snow-input-error', theme.error);
     root.style.setProperty('--snow-input-radius', theme.radius);
+    root.style.setProperty('--snow-form-submit-btn-background', theme.btnBackground);
   }, [currentTheme]);
 
   const handleSubmit = async (data: FormData) => {

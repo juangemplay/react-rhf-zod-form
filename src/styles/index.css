@@ -26,6 +26,7 @@
   --snow-input-disabled-background: #f5f5f5;
   --snow-input-radius: 0.375rem;
   --snow-input-error: #ef4444;
+  --snow-form-submit-btn-background: #3b82f6;
 }
 
 
@@ -201,7 +202,7 @@
    Button
    ============================================================================= */
 
-.snow-btn {
+.snow-form-submit-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -214,28 +215,24 @@
   cursor: pointer;
   transition: background-color 0.2s, opacity 0.2s;
   font-family: inherit;
-}
-
-.snow-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.snow-btn-primary {
-  background: var(--snow-input-active-ring);
+  background: var(--snow-form-submit-btn-background);
   color: white;
   border: none;
 }
 
-.snow-btn-primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--snow-input-active-ring) 85%, black);
+.snow-form-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.snow-btn-primary:focus {
+.snow-form-submit-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--snow-form-submit-btn-background) 85%, black);
+}
+
+.snow-form-submit-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snow-input-active-ring) 40%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snow-form-submit-btn-background) 40%, transparent);
 }
-
 
 /* =============================================================================
    Utility

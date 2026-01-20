@@ -268,6 +268,7 @@ The default styles use CSS variables for easy customization:
   --snow-input-disabled-background: #f5f5f5;
   --snow-input-radius: 0.375rem;
   --snow-input-error: #ef4444;
+  --snow-form-submit-btn-background: #3b82f6;
 }
 
 /* Dark mode */
@@ -278,6 +279,7 @@ The default styles use CSS variables for easy customization:
   --snow-input-active-ring: #3b82f6;
   --snow-input-disabled-background: #16213e;
   --snow-input-error: #f87171;
+  --snow-form-submit-btn-background: #3b82f6;
 }
 ```
 
@@ -298,8 +300,7 @@ The library uses semantic class names:
 | `.snow-select`           | Select dropdown  |
 | `.snow-checkbox`         | Checkbox         |
 | `.snow-radio`            | Radio buttons    |
-| `.snow-btn`              | Buttons          |
-| `.snow-btn-primary`      | Primary button   |
+| `.snow-form-submit-btn`              | Submit button      |
 
 ## Schema Refinements
 

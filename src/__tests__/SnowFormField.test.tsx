@@ -1,14 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useForm } from 'react-hook-form';
 import { useEffect, type ReactNode } from 'react';
 
 import { SnowFormField } from '../SnowFormField';
 import { Form, FormField } from '../FormProvider';
-import { clearRegistry, registerComponent } from '../registry/componentRegistry';
-import { resetTranslationRegistry, setTranslationFunction } from '../registry/translationRegistry';
+import { registerComponent } from '../registry/componentRegistry';
+import { setTranslationFunction } from '../registry/translationRegistry';
 import type { SchemaFieldInfo } from '../types';
+
+// Note: Test setup (component registration) is handled in src/__tests__/setup.ts
 
 // =============================================================================
 // Test Wrapper
@@ -68,10 +70,6 @@ function renderSnowFormField(options: RenderFieldOptions = {}) {
 // =============================================================================
 
 describe('SnowFormField', () => {
-  beforeEach(() => {
-    clearRegistry();
-    resetTranslationRegistry();
-  });
 
   // ===========================================================================
   // Basic Rendering

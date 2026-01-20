@@ -1,35 +1,12 @@
 /**
- * SnowForm CSS Variables and Default Styles
+ * SnowForm Default Styles
  *
  * Import this file to get default styling for SnowForm components.
- * All styles use CSS variables for easy customization.
+ * For full customization, register your own formUI components via setupSnowForm().
  *
  * @example
  * import '@snowpact/react-rhf-zod-form/styles.css';
- *
- * @example Customizing via CSS variables
- * :root {
- *   --snow-input-active-ring: #8b5cf6;
- *   --snow-input-radius: 0.5rem;
- * }
  */
-
-/* =============================================================================
-   CSS Variables
-   ============================================================================= */
-
-:root {
-  --snow-input-background: #ffffff;
-  --snow-input-foreground: #0a0a0a;
-  --snow-input-placeholder: #9ca3af;
-  --snow-input-border: #e5e5e5;
-  --snow-input-active-ring: #3b82f6;
-  --snow-input-disabled-background: #f5f5f5;
-  --snow-input-radius: 0.375rem;
-  --snow-input-error: #ef4444;
-  --snow-form-submit-btn-background: #3b82f6;
-}
-
 
 /* =============================================================================
    Form Layout
@@ -49,12 +26,12 @@
 .snow-form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--snow-input-foreground);
+  color: #0a0a0a;
   line-height: 1.25;
 }
 
 .snow-form-label-error {
-  color: var(--snow-input-error);
+  color: #ef4444;
 }
 
 .snow-form-description,
@@ -64,11 +41,11 @@
 }
 
 .snow-form-description {
-  color: var(--snow-input-placeholder);
+  color: #9ca3af;
 }
 
 .snow-form-message {
-  color: var(--snow-input-error);
+  color: #ef4444;
 }
 
 /* =============================================================================
@@ -82,24 +59,24 @@
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  border: 1px solid var(--snow-input-border);
-  border-radius: var(--snow-input-radius);
-  background: var(--snow-input-background);
-  color: var(--snow-input-foreground);
+  border: 1px solid #e5e5e5;
+  border-radius: 0.375rem;
+  background: #ffffff;
+  color: #0a0a0a;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .snow-input::placeholder,
 .snow-textarea::placeholder {
-  color: var(--snow-input-placeholder);
+  color: #9ca3af;
 }
 
 .snow-input:focus,
 .snow-textarea:focus,
 .snow-select:focus {
-  border-color: var(--snow-input-active-ring);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snow-input-active-ring) 20%, transparent);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .snow-input:disabled,
@@ -107,15 +84,15 @@
 .snow-select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: var(--snow-input-disabled-background);
+  background: #f5f5f5;
 }
 
 .snow-input-error {
-  border-color: var(--snow-input-error);
+  border-color: #ef4444;
 }
 
 .snow-input-error:focus {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snow-input-error) 20%, transparent);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
 /* Textarea specific */
@@ -144,7 +121,7 @@
 .snow-radio {
   width: 1rem;
   height: 1rem;
-  accent-color: var(--snow-input-active-ring);
+  accent-color: #3b82f6;
   cursor: pointer;
 }
 
@@ -191,7 +168,7 @@
   gap: 0.5rem;
   cursor: pointer;
   font-size: 0.875rem;
-  color: var(--snow-input-foreground);
+  color: #0a0a0a;
 }
 
 .snow-radio-label:has(input:disabled) {
@@ -212,11 +189,11 @@
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.5;
-  border-radius: var(--snow-input-radius);
+  border-radius: 0.375rem;
   cursor: pointer;
   transition: background-color 0.2s, opacity 0.2s;
   font-family: inherit;
-  background: var(--snow-form-submit-btn-background);
+  background: #3b82f6;
   color: white;
   border: none;
 }
@@ -227,12 +204,12 @@
 }
 
 .snow-form-submit-btn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--snow-form-submit-btn-background) 85%, black);
+  background: #2563eb;
 }
 
 .snow-form-submit-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snow-form-submit-btn-background) 40%, transparent);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
 }
 
 /* =============================================================================

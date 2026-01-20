@@ -4,18 +4,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 
 import { SnowForm } from '../SnowForm';
-import { resetBehaviorRegistry } from '../registry/behaviorRegistry';
-import { clearRegistry, registerComponent, registerSubmitButton } from '../registry/componentRegistry';
-import { resetTranslationRegistry, setTranslationFunction } from '../registry/translationRegistry';
+import { registerComponent, registerSubmitButton } from '../registry/componentRegistry';
+import { setTranslationFunction } from '../registry/translationRegistry';
 
-// =============================================================================
-// Test Setup
-// =============================================================================
+// Note: Test setup (component registration) is handled in src/__tests__/setup.ts
 
 beforeEach(() => {
-  clearRegistry();
-  resetTranslationRegistry();
-  resetBehaviorRegistry();
   vi.clearAllMocks();
 });
 

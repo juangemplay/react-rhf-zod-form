@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import type { DemoConfig } from './types';
 import { CodeHighlight } from './CodeHighlight';
-import {
-  generateInstallCode,
-  generateSetupCode,
-  generateCustomComponentsCode,
-  generateThemeCode,
-  generateFormCode,
-} from './codeGenerator';
+import { generateInstallCode, generateSetupCode, generateFormCode } from './codeGenerator';
 
 interface CodeSectionProps {
   title: string;
@@ -67,19 +61,26 @@ interface CodePanelProps {
 }
 
 export function CodePanel({ config }: CodePanelProps) {
+  const setupTitle =
+    config.componentMode === 'custom'
+      ? '1. Setup with custom components (Recommended)'
+      : '1. Setup with defaults (requires CSS)';
+
   return (
     <div className="bg-gray-900 text-gray-100 h-full overflow-y-auto flex flex-col">
       <div className="px-3 py-2 border-b border-gray-700/50 bg-gray-800 flex-shrink-0">
         <h2 className="text-sm font-semibold">Developer Preview</h2>
-        <p className="text-[11px] text-gray-500">Code to reproduce this form</p>
+        <p className="text-[11px] text-gray-500">
+          Setup: <span className={config.componentMode === 'custom' ? 'text-purple-400' : 'text-blue-400'}>
+            {config.componentMode === 'custom' ? 'Custom (Recommended)' : 'With Defaults'}
+          </span>
+        </p>
       </div>
 
       <div className="flex-1 overflow-y-auto divide-y divide-gray-800">
         <CodeSection title="0. Install dependencies" code={generateInstallCode()} defaultOpen={false} />
-        <CodeSection title="1a. Quick setup" code={generateSetupCode()} defaultOpen={false} />
-        <CodeSection title="1b. With custom components (optional)" code={generateCustomComponentsCode()} defaultOpen={false} />
-        <CodeSection title="2. Custom theme (optional)" code={generateThemeCode()} defaultOpen={false} />
-        <CodeSection title="3. Use SnowForm" code={generateFormCode(config)} />
+        <CodeSection title={setupTitle} code={generateSetupCode(config.componentMode)} defaultOpen={false} />
+        <CodeSection title="2. Use SnowForm" code={generateFormCode(config)} />
         <DoneSection />
       </div>
     </div>

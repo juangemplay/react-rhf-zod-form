@@ -1,72 +1,11 @@
 import { useCallback } from 'react';
 import type { ControllerRenderProps, FieldValues, Path } from 'react-hook-form';
 
-import {
-  DefaultCheckbox,
-  DefaultDatePicker,
-  DefaultInput,
-  DefaultNumberInput,
-  DefaultRadio,
-  DefaultSelect,
-  DefaultTextarea,
-} from './components';
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage, useFormField } from './FormProvider';
 import { getRegisteredComponent } from './registry/componentRegistry';
 import { getT } from './registry/translationRegistry';
-import type { FieldConfig, FieldType, RegisterableComponent, RegisteredComponentProps, SchemaFieldInfo } from './types';
+import type { FieldConfig, RegisteredComponentProps, SchemaFieldInfo } from './types';
 import { resolveFieldType } from './utils';
-
-// =============================================================================
-// Default Component Mapping
-// =============================================================================
-
-const EmailInput: RegisterableComponent = props => <DefaultInput {...props} type="email" />;
-const PasswordInput: RegisterableComponent = props => <DefaultInput {...props} type="password" />;
-const TimeInput: RegisterableComponent = props => <DefaultInput {...props} type="time" />;
-const DateTimeLocalInput: RegisterableComponent = props => <DefaultInput {...props} type="datetime-local" />;
-const TelInput: RegisterableComponent = props => <DefaultInput {...props} type="tel" />;
-const UrlInput: RegisterableComponent = props => <DefaultInput {...props} type="url" />;
-const ColorInput: RegisterableComponent = props => <DefaultInput {...props} type="color" />;
-const FileInput: RegisterableComponent = props => <DefaultInput {...props} type="file" />;
-
-function getDefaultComponent(type: FieldType): RegisterableComponent | null {
-  switch (type) {
-    case 'text':
-      return DefaultInput;
-    case 'email':
-      return EmailInput;
-    case 'password':
-      return PasswordInput;
-    case 'time':
-      return TimeInput;
-    case 'datetime-local':
-      return DateTimeLocalInput;
-    case 'tel':
-      return TelInput;
-    case 'url':
-      return UrlInput;
-    case 'color':
-      return ColorInput;
-    case 'file':
-      return FileInput;
-    case 'textarea':
-      return DefaultTextarea;
-    case 'select':
-      return DefaultSelect;
-    case 'checkbox':
-      return DefaultCheckbox;
-    case 'radio':
-      return DefaultRadio;
-    case 'number':
-      return DefaultNumberInput;
-    case 'date':
-      return DefaultDatePicker;
-    case 'hidden':
-      return null;
-    default:
-      return null;
-  }
-}
 
 // =============================================================================
 // SnowFormField Component
@@ -147,15 +86,13 @@ export function SnowFormField<
     );
   }
 
-  // Get component (registered > default)
-  const RegisteredComponent = getRegisteredComponent(fieldType);
-  const DefaultComponent = getDefaultComponent(fieldType);
-  const Component = RegisteredComponent ?? DefaultComponent;
+  // Get registered component (strict: no fallback)
+  const Component = getRegisteredComponent(fieldType);
 
   if (!Component) {
     console.warn(
-      `[SnowForm] No component registered for type "${fieldType}" and no default available. ` +
-        `Register a component with registerComponent('${fieldType}', MyComponent).`
+      `[SnowForm] No component registered for type "${fieldType}". ` +
+        `Use setupSnowForm({ components: DEFAULT_COMPONENTS }) or register your own.`
     );
     return null;
   }

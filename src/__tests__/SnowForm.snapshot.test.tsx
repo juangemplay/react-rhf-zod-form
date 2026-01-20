@@ -1,21 +1,10 @@
 import { render } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 import { SnowForm } from '../SnowForm';
-import { resetBehaviorRegistry } from '../registry/behaviorRegistry';
-import { clearRegistry } from '../registry/componentRegistry';
-import { resetTranslationRegistry } from '../registry/translationRegistry';
 
-// =============================================================================
-// Test Setup
-// =============================================================================
-
-beforeEach(() => {
-  clearRegistry();
-  resetTranslationRegistry();
-  resetBehaviorRegistry();
-});
+// Note: Test setup (component registration) is handled in src/__tests__/setup.ts
 
 // =============================================================================
 // HTML Snapshot Tests

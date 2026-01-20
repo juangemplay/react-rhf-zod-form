@@ -2,11 +2,16 @@ import type React from 'react';
 
 import type {
   FieldType,
+  FormUIComponents,
+  FormUIDescriptionProps,
+  FormUIErrorMessageProps,
+  FormUILabelProps,
   RegisterableComponent,
   RegisteredComponent,
   RegisteredSubmitButton,
   SubmitButtonProps,
 } from '../types';
+import { cn } from '../utils';
 
 // =============================================================================
 // Component Registry
@@ -22,6 +27,11 @@ const componentRegistry = new Map<string, RegisteredComponent>();
  * The submit button component (can be customized)
  */
 let submitButtonComponent: RegisteredSubmitButton | null = null;
+
+/**
+ * Registry for form UI components (label, description, errorMessage)
+ */
+let formUIComponents: FormUIComponents = {};
 
 // =============================================================================
 // Registration API
@@ -87,6 +97,31 @@ export function registerSubmitButton(component: RegisteredSubmitButton): void {
   submitButtonComponent = component;
 }
 
+/**
+ * Register custom form UI components (label, description, errorMessage)
+ *
+ * @example
+ * ```typescript
+ * registerFormUI({
+ *   label: ({ children, required, invalid, htmlFor }) => (
+ *     <label htmlFor={htmlFor} className={cn('my-label', invalid && 'error')}>
+ *       {children}
+ *       {required && <span className="text-red-500">*</span>}
+ *     </label>
+ *   ),
+ *   description: ({ children }) => (
+ *     <p className="text-sm text-gray-500">{children}</p>
+ *   ),
+ *   errorMessage: ({ message }) => (
+ *     <p className="text-sm text-red-500">{message}</p>
+ *   ),
+ * });
+ * ```
+ */
+export function registerFormUI(components: FormUIComponents): void {
+  formUIComponents = { ...formUIComponents, ...components };
+}
+
 // =============================================================================
 // Getters
 // =============================================================================
@@ -105,6 +140,13 @@ export function getRegisteredComponent(type: string): RegisteredComponent | unde
  */
 export function getRegisteredSubmitButton(): RegisteredSubmitButton | undefined {
   return submitButtonComponent ?? undefined;
+}
+
+/**
+ * Get the registered form UI components
+ */
+export function getFormUI(): FormUIComponents {
+  return formUIComponents;
 }
 
 /**
@@ -131,6 +173,7 @@ export function getRegisteredTypes(): string[] {
 export function clearRegistry(): void {
   componentRegistry.clear();
   submitButtonComponent = null;
+  formUIComponents = {};
 }
 
 // =============================================================================
@@ -147,3 +190,81 @@ export function DefaultSubmitButton({ loading, disabled, children, className }: 
     </button>
   );
 }
+
+// =============================================================================
+// Default Form UI Components
+// =============================================================================
+
+/**
+ * Default label component
+ */
+function DefaultLabel({ children, required, invalid, htmlFor }: FormUILabelProps): React.ReactElement {
+  return (
+    <label htmlFor={htmlFor} className={cn('snow-form-label', invalid && 'snow-form-label-error')}>
+      {children}
+      {required && <span aria-hidden="true"> *</span>}
+    </label>
+  );
+}
+
+/**
+ * Default description component
+ */
+function DefaultDescription({ children }: FormUIDescriptionProps): React.ReactElement {
+  return <p className="snow-form-description">{children}</p>;
+}
+
+/**
+ * Default error message component
+ */
+function DefaultErrorMessage({ message }: FormUIErrorMessageProps): React.ReactElement {
+  return (
+    <p className="snow-form-message" role="alert">
+      {message}
+    </p>
+  );
+}
+
+// =============================================================================
+// Default Constants for Export
+// =============================================================================
+
+/**
+ * Default form UI components (label, description, errorMessage).
+ * Import these if you want to use SnowForm's default styled UI components.
+ * Requires importing '@snowpact/react-rhf-zod-form/styles.css'.
+ *
+ * @example
+ * ```typescript
+ * import { setupSnowForm, DEFAULT_FORM_UI } from '@snowpact/react-rhf-zod-form';
+ * import '@snowpact/react-rhf-zod-form/styles.css';
+ *
+ * setupSnowForm({
+ *   translate: (key) => key,
+ *   formUI: DEFAULT_FORM_UI,
+ * });
+ * ```
+ */
+export const DEFAULT_FORM_UI: FormUIComponents = {
+  label: DefaultLabel,
+  description: DefaultDescription,
+  errorMessage: DefaultErrorMessage,
+};
+
+/**
+ * Default submit button component.
+ * Import this if you want to use SnowForm's default styled submit button.
+ * Requires importing '@snowpact/react-rhf-zod-form/styles.css'.
+ *
+ * @example
+ * ```typescript
+ * import { setupSnowForm, DEFAULT_SUBMIT_BUTTON } from '@snowpact/react-rhf-zod-form';
+ * import '@snowpact/react-rhf-zod-form/styles.css';
+ *
+ * setupSnowForm({
+ *   translate: (key) => key,
+ *   submitButton: DEFAULT_SUBMIT_BUTTON,
+ * });
+ * ```
+ */
+export const DEFAULT_SUBMIT_BUTTON: RegisteredSubmitButton = DefaultSubmitButton;

@@ -1,12 +1,10 @@
-import { type DemoConfig, type RenderMode, themes } from './types';
+import { type DemoConfig, type RenderMode, type ComponentMode } from './types';
 
 interface ConfigPanelProps {
   config: DemoConfig;
   onConfigChange: <K extends keyof DemoConfig>(key: K, value: DemoConfig[K]) => void;
   onFillAsync: () => void;
   isLoadingAsync: boolean;
-  currentTheme: string;
-  onThemeChange: (theme: string) => void;
 }
 
 function ConfigCheckbox({
@@ -33,6 +31,40 @@ function ConfigCheckbox({
         <p className="text-sm text-gray-400">{description}</p>
       </div>
     </label>
+  );
+}
+
+function SetupModeSelector({
+  value,
+  onChange,
+}: {
+  value: ComponentMode;
+  onChange: (mode: ComponentMode) => void;
+}) {
+  const modes: { value: ComponentMode; label: string; description: string; color: string }[] = [
+    { value: 'custom', label: 'Custom (Recommended)', description: 'Your own components, no CSS needed', color: 'purple' },
+    { value: 'default', label: 'With Defaults', description: 'Built-in components with CSS', color: 'blue' },
+  ];
+
+  return (
+    <div className="flex gap-2">
+      {modes.map(mode => (
+        <button
+          key={mode.value}
+          onClick={() => onChange(mode.value)}
+          className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-all ${
+            value === mode.value
+              ? mode.color === 'purple'
+                ? 'bg-purple-600 text-white'
+                : 'bg-blue-600 text-white'
+              : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+          }`}
+          title={mode.description}
+        >
+          {mode.label}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -73,15 +105,27 @@ export function ConfigPanel({
   onConfigChange,
   onFillAsync,
   isLoadingAsync,
-  currentTheme,
-  onThemeChange,
 }: ConfigPanelProps) {
   return (
     <div className="bg-gray-700 text-white p-4 h-full overflow-y-auto">
       <h2 className="text-lg font-semibold mb-4 border-b border-gray-500 pb-2">Config Panel</h2>
 
-      {/* Render Mode Section */}
+      {/* Setup Mode Section */}
       <div className="mb-6">
+        <h3 className="text-sm font-semibold text-gray-300 mb-3">Setup Mode</h3>
+        <SetupModeSelector
+          value={config.componentMode}
+          onChange={mode => onConfigChange('componentMode', mode)}
+        />
+        <p className="text-xs text-gray-400 mt-2">
+          {config.componentMode === 'default'
+            ? 'Using built-in components (requires CSS import)'
+            : 'Using custom components (no CSS needed)'}
+        </p>
+      </div>
+
+      {/* Render Mode Section */}
+      <div className="mb-6 pt-4 border-t border-gray-500">
         <h3 className="text-sm font-semibold text-gray-300 mb-3">Render Mode</h3>
         <RenderModeSelector
           value={config.renderMode}
@@ -124,33 +168,8 @@ export function ConfigPanel({
         />
       </div>
 
-      {/* Theme Section */}
-      <div className="mb-6 pt-4 border-t border-gray-500">
-        <h3 className="text-sm font-semibold text-gray-300 mb-3">Theme</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {Object.entries(themes).map(([name, theme]) => (
-            <button
-              key={name}
-              onClick={() => onThemeChange(name)}
-              className={`px-2 py-1.5 rounded text-xs font-medium transition-all ${
-                currentTheme === name
-                  ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-700'
-                  : 'hover:bg-gray-600'
-              }`}
-              style={{
-                backgroundColor: theme.background,
-                color: theme.foreground,
-                border: `1px solid ${theme.border}`,
-              }}
-            >
-              {name}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Actions Section */}
-      <div className="mb-6 pt-4 border-t border-gray-500">
+      <div className="pt-4 border-t border-gray-500">
         <h3 className="text-sm font-semibold text-gray-300 mb-3">Actions</h3>
         <button
           onClick={onFillAsync}
@@ -159,35 +178,6 @@ export function ConfigPanel({
         >
           {isLoadingAsync ? 'Loading...' : 'Fill with async data'}
         </button>
-      </div>
-
-      {/* Field Types Reference */}
-      <div className="pt-4 border-t border-gray-500">
-        <h3 className="text-sm font-semibold text-gray-300 mb-2">Field Types</h3>
-        <div className="flex flex-wrap gap-1 text-xs">
-          {[
-            'text',
-            'email',
-            'password',
-            'number',
-            'textarea',
-            'select',
-            'checkbox',
-            'radio',
-            'date',
-            'time',
-            'datetime-local',
-            'file',
-            'tel',
-            'url',
-            'color',
-            'hidden',
-          ].map(type => (
-            <code key={type} className="bg-gray-600 px-1.5 py-0.5 rounded">
-              {type}
-            </code>
-          ))}
-        </div>
       </div>
     </div>
   );

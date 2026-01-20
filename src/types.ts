@@ -183,6 +183,43 @@ export interface SubmitButtonProps {
 export type RegisteredSubmitButton = React.ComponentType<SubmitButtonProps>;
 
 // =============================================================================
+// Form UI Component Types
+// =============================================================================
+
+/**
+ * Props for custom label components
+ */
+export interface FormUILabelProps {
+  children: ReactNode;
+  required?: boolean;
+  invalid?: boolean;
+  htmlFor: string;
+}
+
+/**
+ * Props for custom description components
+ */
+export interface FormUIDescriptionProps {
+  children: ReactNode;
+}
+
+/**
+ * Props for custom error message components
+ */
+export interface FormUIErrorMessageProps {
+  message: string;
+}
+
+/**
+ * Custom form UI components that can be registered
+ */
+export interface FormUIComponents {
+  label?: React.ComponentType<FormUILabelProps>;
+  description?: React.ComponentType<FormUIDescriptionProps>;
+  errorMessage?: React.ComponentType<FormUIErrorMessageProps>;
+}
+
+// =============================================================================
 // Children Pattern Types
 // =============================================================================
 

@@ -1,4 +1,5 @@
 export { CodePanel } from './CodePanel';
 export { ConfigPanel } from './ConfigPanel';
 export { SubmittedDataDisplay } from './SubmittedDataDisplay';
-export { themes, type DemoConfig, type ThemeColors, type RenderMode } from './types';
+export { CUSTOM_COMPONENTS, CUSTOM_FORM_UI, CUSTOM_SUBMIT_BUTTON } from './CustomComponents';
+export { type DemoConfig, type RenderMode, type ComponentMode } from './types';

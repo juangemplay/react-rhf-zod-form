@@ -8,6 +8,7 @@ import {
   type Path,
 } from 'react-hook-form';
 
+import { getFormUI } from './registry/componentRegistry';
 import { cn } from './utils';
 
 // =============================================================================
@@ -100,16 +101,25 @@ interface FormLabelProps {
 }
 
 /**
- * Label for a form field
+ * Label for a form field.
+ * Requires a label component to be registered via setupSnowForm({ formUI: ... }).
  */
-export function FormLabel({ children, className, required }: FormLabelProps): React.ReactElement {
+export function FormLabel({ children, required }: FormLabelProps): React.ReactElement | null {
   const { id, invalid } = useFormField();
+  const { label: Label } = getFormUI();
+
+  if (!Label) {
+    console.warn(
+      '[SnowForm] No label component registered. ' +
+        'Use setupSnowForm({ formUI: DEFAULT_FORM_UI }) or register your own.'
+    );
+    return null;
+  }
 
   return (
-    <label htmlFor={id} className={cn('snow-form-label', invalid && 'snow-form-label-error', className)}>
+    <Label htmlFor={id} required={required} invalid={invalid}>
       {children}
-      {required && <span aria-hidden="true"> *</span>}
-    </label>
+    </Label>
   );
 }
 
@@ -132,10 +142,21 @@ interface FormDescriptionProps {
 }
 
 /**
- * Help text below a form field
+ * Help text below a form field.
+ * Requires a description component to be registered via setupSnowForm({ formUI: ... }).
  */
-export function FormDescription({ children, className }: FormDescriptionProps): React.ReactElement {
-  return <p className={cn('snow-form-description', className)}>{children}</p>;
+export function FormDescription({ children }: FormDescriptionProps): React.ReactElement | null {
+  const { description: Description } = getFormUI();
+
+  if (!Description) {
+    console.warn(
+      '[SnowForm] No description component registered. ' +
+        'Use setupSnowForm({ formUI: DEFAULT_FORM_UI }) or register your own.'
+    );
+    return null;
+  }
+
+  return <Description>{children}</Description>;
 }
 
 interface FormMessageProps {
@@ -144,18 +165,28 @@ interface FormMessageProps {
 }
 
 /**
- * Error message for a form field
- * Automatically displays the field's error if present
+ * Error message for a form field.
+ * Automatically displays the field's error if present.
+ * Requires an errorMessage component to be registered via setupSnowForm({ formUI: ... }).
  */
-export function FormMessage({ className, children }: FormMessageProps): React.ReactElement | null {
+export function FormMessage({ children }: FormMessageProps): React.ReactElement | null {
   const { error } = useFormField();
+  const { errorMessage: ErrorMessage } = getFormUI();
   const message = error?.message ?? children;
 
   if (!message) return null;
 
-  return (
-    <p className={cn('snow-form-message', className)} role="alert">
-      {message}
-    </p>
-  );
+  if (!ErrorMessage) {
+    console.warn(
+      '[SnowForm] No errorMessage component registered. ' +
+        'Use setupSnowForm({ formUI: DEFAULT_FORM_UI }) or register your own.'
+    );
+    return null;
+  }
+
+  if (typeof message !== 'string') {
+    return null;
+  }
+
+  return <ErrorMessage message={message} />;
 }

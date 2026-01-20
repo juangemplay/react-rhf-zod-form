@@ -1,15 +1,19 @@
-import type { RegisterableComponent, RegisteredSubmitButton } from '../types';
+import type { FormUIComponents, RegisterableComponent, RegisteredSubmitButton } from '../types';
 
 import {
   registerComponent,
   registerComponents,
   registerSubmitButton,
+  registerFormUI,
   getRegisteredComponent,
   getRegisteredSubmitButton,
+  getFormUI,
   hasRegisteredComponent,
   getRegisteredTypes,
   clearRegistry,
   DefaultSubmitButton,
+  DEFAULT_FORM_UI,
+  DEFAULT_SUBMIT_BUTTON,
 } from './componentRegistry';
 
 import {
@@ -131,6 +135,33 @@ export interface SetupSnowFormOptions {
    * ```
    */
   onError?: OnErrorBehavior;
+
+  /**
+   * Custom form UI components (label, description, errorMessage)
+   * Use this to replace the default layout components with your own
+   *
+   * @example
+   * ```typescript
+   * setupSnowForm({
+   *   translate: t,
+   *   formUI: {
+   *     label: ({ children, required, invalid, htmlFor }) => (
+   *       <label htmlFor={htmlFor} className={cn('my-label', invalid && 'error')}>
+   *         {children}
+   *         {required && <span className="text-red-500">*</span>}
+   *       </label>
+   *     ),
+   *     description: ({ children }) => (
+   *       <p className="text-sm text-gray-500">{children}</p>
+   *     ),
+   *     errorMessage: ({ message }) => (
+   *       <p className="text-sm text-red-500">{message}</p>
+   *     ),
+   *   },
+   * });
+   * ```
+   */
+  formUI?: FormUIComponents;
 }
 
 // =============================================================================
@@ -220,6 +251,11 @@ export function setupSnowForm(options: SetupSnowFormOptions): void {
     setOnErrorBehavior(options.onError);
   }
 
+  // Register form UI components (optional)
+  if (options.formUI) {
+    registerFormUI(options.formUI);
+  }
+
   isSetup = true;
 }
 
@@ -252,12 +288,16 @@ export {
   registerComponent,
   registerComponents,
   registerSubmitButton,
+  registerFormUI,
   getRegisteredComponent,
   getRegisteredSubmitButton,
+  getFormUI,
   hasRegisteredComponent,
   getRegisteredTypes,
   clearRegistry,
   DefaultSubmitButton,
+  DEFAULT_FORM_UI,
+  DEFAULT_SUBMIT_BUTTON,
 };
 
 // Translation registry

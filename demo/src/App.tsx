@@ -1,20 +1,62 @@
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
-import { SnowForm, setupSnowForm } from '../../src';
-import '../../src/styles/index.css';
-import { CodePanel, ConfigPanel, SubmittedDataDisplay, type DemoConfig, themes } from './components';
+import {
+  SnowForm,
+  setupSnowForm,
+  resetSnowForm,
+  DEFAULT_COMPONENTS,
+  DEFAULT_FORM_UI,
+  DEFAULT_SUBMIT_BUTTON,
+} from '../../src';
+import '../../src/styles/index.css'; // Required for default components
+import {
+  CodePanel,
+  ConfigPanel,
+  SubmittedDataDisplay,
+  type DemoConfig,
+  type ComponentMode,
+  CUSTOM_COMPONENTS,
+  CUSTOM_FORM_UI,
+  CUSTOM_SUBMIT_BUTTON,
+} from './components';
 
-// Initialize SnowForm with the new API
-setupSnowForm({
-  translate: key => key,
-  onError: (formRef, errors) => {
-    const firstErrorField = Object.keys(errors)[0];
-    if (firstErrorField) {
-      const element = formRef?.querySelector(`[name="${firstErrorField}"]`);
-      element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  },
-});
+// Setup function based on mode
+function setupForMode(mode: ComponentMode) {
+  resetSnowForm();
+
+  if (mode === 'default') {
+    setupSnowForm({
+      translate: key => key,
+      components: DEFAULT_COMPONENTS,
+      formUI: DEFAULT_FORM_UI,
+      submitButton: DEFAULT_SUBMIT_BUTTON,
+      onError: (formRef, errors) => {
+        const firstErrorField = Object.keys(errors)[0];
+        if (firstErrorField) {
+          const element = formRef?.querySelector(`[name="${firstErrorField}"]`);
+          element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      },
+    });
+  } else {
+    setupSnowForm({
+      translate: key => key,
+      components: CUSTOM_COMPONENTS,
+      formUI: CUSTOM_FORM_UI,
+      submitButton: CUSTOM_SUBMIT_BUTTON,
+      onError: (formRef, errors) => {
+        const firstErrorField = Object.keys(errors)[0];
+        if (firstErrorField) {
+          const element = formRef?.querySelector(`[name="${firstErrorField}"]`);
+          element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      },
+    });
+  }
+}
+
+// Initial setup
+setupForMode('custom');
 
 // Complete schema showcasing all field types
 const schema = z.object({
@@ -54,28 +96,19 @@ export function App() {
   const [formKey, setFormKey] = useState(0);
   const [asyncData, setAsyncData] = useState<Partial<FormData> | null>(null);
   const [isLoadingAsync, setIsLoadingAsync] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState('default');
   const [config, setConfig] = useState<DemoConfig>({
+    componentMode: 'custom',
     renderMode: 'auto',
     simulateSlowSubmission: false,
     simulateEndpointError: false,
     showDebugMode: true,
   });
 
-  // Apply theme CSS variables
+  // Re-setup SnowForm when component mode changes
   useEffect(() => {
-    const theme = themes[currentTheme];
-    const root = document.documentElement;
-    root.style.setProperty('--snow-input-background', theme.inputBackground);
-    root.style.setProperty('--snow-input-foreground', theme.foreground);
-    root.style.setProperty('--snow-input-placeholder', theme.placeholder);
-    root.style.setProperty('--snow-input-border', theme.border);
-    root.style.setProperty('--snow-input-active-ring', theme.ring);
-    root.style.setProperty('--snow-input-disabled-background', theme.disabledBackground);
-    root.style.setProperty('--snow-input-error', theme.error);
-    root.style.setProperty('--snow-input-radius', theme.radius);
-    root.style.setProperty('--snow-form-submit-btn-background', theme.btnBackground);
-  }, [currentTheme]);
+    setupForMode(config.componentMode);
+    setFormKey(prev => prev + 1); // Force form re-render
+  }, [config.componentMode]);
 
   const handleSubmit = async (data: FormData) => {
     if (config.simulateSlowSubmission) {
@@ -203,10 +236,7 @@ export function App() {
             Automatic form generation from Zod schemas with react-hook-form
           </p>
 
-          <div
-            className="rounded-lg shadow-md p-6 mb-8"
-            style={{ backgroundColor: themes[currentTheme].background, color: 'var(--snow-input-foreground)' }}
-          >
+          <div className="rounded-lg shadow-md p-6 mb-8 bg-white">
             {renderForm()}
           </div>
 
@@ -221,8 +251,6 @@ export function App() {
           onConfigChange={handleConfigChange}
           onFillAsync={handleFillAsync}
           isLoadingAsync={isLoadingAsync}
-          currentTheme={currentTheme}
-          onThemeChange={setCurrentTheme}
         />
       </div>
     </div>

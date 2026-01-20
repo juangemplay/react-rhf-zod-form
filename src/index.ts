@@ -25,13 +25,21 @@ export {
   registerComponents,
   registerComponent,
   registerSubmitButton,
+  // Form UI
+  registerFormUI,
   // Translation
   setTranslationFunction,
   setTranslations,
   getT,
   // Behavior
   setOnErrorBehavior,
+  // Default constants
+  DEFAULT_FORM_UI,
+  DEFAULT_SUBMIT_BUTTON,
 } from './registry';
+
+// Default components (requires CSS import)
+export { DEFAULT_COMPONENTS } from './components';
 
 // =============================================================================
 // Utilities
@@ -62,6 +70,11 @@ export type {
   RegisterableComponent,
   RegisteredComponent,
   RegisteredSubmitButton,
+  // Form UI types
+  FormUIComponents,
+  FormUILabelProps,
+  FormUIDescriptionProps,
+  FormUIErrorMessageProps,
   // Config types
   SnowFormConfig,
 } from './types';

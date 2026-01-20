@@ -1,120 +1,84 @@
-import type { DemoConfig } from './types';
+import type { DemoConfig, ComponentMode } from './types';
 
 export function generateInstallCode(): string {
   return `npm install react-hook-form @hookform/resolvers zod
 npm install @snowpact/react-rhf-zod-form`;
 }
 
-export function generateSetupCode(): string {
-  return `// Run once at app startup (e.g., app/setup.ts, _app.tsx, main.tsx)
+export function generateSetupCode(mode: ComponentMode): string {
+  if (mode === 'custom') {
+    return `// Run once at app startup (e.g., app/setup.ts, _app.tsx, main.tsx)
 import { setupSnowForm } from '@snowpact/react-rhf-zod-form';
-import '@snowpact/react-rhf-zod-form/styles.css';
+import type { RegisteredComponentProps, FormUILabelProps } from '@snowpact/react-rhf-zod-form';
+// NO CSS import needed - custom components handle their own styling
 
-setupSnowForm({
-  // Translation function (i18next.t, next-intl t, or identity)
-  translate: (key) => key,
-
-  // Custom translations (optional)
-  translations: {
-    'snowForm.submit': 'Submit',
-    'snowForm.submitting': 'Submitting...',
-    'snowForm.required': 'Required',
-    'snowForm.selectPlaceholder': 'Select...',
-  },
-
-  // Scroll to first error on validation failure (optional)
-  onError: (formRef, errors) => {
-    const firstErrorField = Object.keys(errors)[0];
-    if (firstErrorField) {
-      const element = formRef?.querySelector(\`[name="\${firstErrorField}"]\`);
-      element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  },
-});`;
+// Example custom input component
+function CustomInput({ value, onChange, placeholder, disabled, name }: RegisteredComponentProps<string>) {
+  return (
+    <input
+      id={name}
+      name={name}
+      value={value ?? ''}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      disabled={disabled}
+      className="w-full px-3 py-2 border-2 border-purple-300 rounded-lg
+                 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+    />
+  );
 }
 
-export function generateCustomComponentsCode(): string {
-  return `// Run once at app startup (e.g., app/setup.ts, _app.tsx, main.tsx)
-import { setupSnowForm } from '@snowpact/react-rhf-zod-form';
-import '@snowpact/react-rhf-zod-form/styles.css';
-import { Input, Select, Textarea, Button, Spinner } from '@/components/ui';
-import { cn } from '@/lib/utils';
-
-setupSnowForm({
-  translate: (key) => key,
-
-  // Register custom UI components globally
-  components: {
-    text: ({ value, onChange, placeholder, disabled, error, className }) => (
-      <Input
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={cn(className, error && 'border-red-500')}
-      />
-    ),
-    select: ({ value, onChange, options, placeholder, disabled }) => (
-      <Select value={value} onValueChange={onChange} disabled={disabled}>
-        {placeholder && <Select.Item value="">{placeholder}</Select.Item>}
-        {options?.map((opt) => (
-          <Select.Item key={opt.value} value={opt.value}>
-            {opt.label}
-          </Select.Item>
-        ))}
-      </Select>
-    ),
-    textarea: ({ value, onChange, placeholder, disabled, className }) => (
-      <Textarea
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={className}
-      />
-    ),
-  },
-
-  // Custom submit button
-  submitButton: ({ loading, disabled, children, className }) => (
-    <Button type="submit" disabled={disabled || loading} className={className}>
-      {loading ? <Spinner className="mr-2" /> : null}
+// Example custom label component
+function CustomLabel({ children, required, invalid, htmlFor }: FormUILabelProps) {
+  return (
+    <label htmlFor={htmlFor} className={\`font-semibold \${invalid ? 'text-red-600' : 'text-purple-700'}\`}>
       {children}
-    </Button>
-  ),
+      {required && <span className="text-red-500 ml-1">*</span>}
+    </label>
+  );
+}
 
-  onError: (formRef) => {
-    formRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+setupSnowForm({
+  translate: (key) => key,
+  components: {
+    text: CustomInput,
+    email: (props) => <CustomInput {...props} type="email" />,
+    password: (props) => <CustomInput {...props} type="password" />,
+    // ... other components
   },
+  formUI: {
+    label: CustomLabel,
+    description: ({ children }) => <p className="text-purple-500">{children}</p>,
+    errorMessage: ({ message }) => <p className="text-red-600">{message}</p>,
+  },
+  submitButton: ({ loading, disabled, children }) => (
+    <button
+      type="submit"
+      disabled={disabled || loading}
+      className="px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white
+                 font-semibold rounded-lg disabled:opacity-50"
+    >
+      {loading ? 'Processing...' : children}
+    </button>
+  ),
 });`;
-}
+  }
 
-export function generateThemeCode(): string {
-  return `/* Add to your global CSS file (e.g., globals.css, index.css) */
+  return `// Run once at app startup (e.g., app/setup.ts, _app.tsx, main.tsx)
+import {
+  setupSnowForm,
+  DEFAULT_COMPONENTS,
+  DEFAULT_FORM_UI,
+  DEFAULT_SUBMIT_BUTTON,
+} from '@snowpact/react-rhf-zod-form';
+import '@snowpact/react-rhf-zod-form/styles.css'; // Required for default components
 
-:root {
-  --snow-input-background: #ffffff;
-  --snow-input-foreground: #0a0a0a;
-  --snow-input-placeholder: #9ca3af;
-  --snow-input-border: #e5e5e5;
-  --snow-input-active-ring: #3b82f6;
-  --snow-input-disabled-background: #f5f5f5;
-  --snow-input-radius: 0.375rem;
-  --snow-input-error: #ef4444;
-  --snow-form-submit-btn-background: #3b82f6;
-}
-
-/* Dark mode example */
-.dark {
-  --snow-input-background: #1a1a2e;
-  --snow-input-foreground: #eaeaea;
-  --snow-input-placeholder: #6b7280;
-  --snow-input-border: #0f3460;
-  --snow-input-active-ring: #3b82f6;
-  --snow-input-disabled-background: #16213e;
-  --snow-input-error: #f87171;
-  --snow-form-submit-btn-background: #3b82f6;
-}`;
+setupSnowForm({
+  translate: (key) => key,
+  components: DEFAULT_COMPONENTS,
+  formUI: DEFAULT_FORM_UI,
+  submitButton: DEFAULT_SUBMIT_BUTTON,
+});`;
 }
 
 export function generateFormCode(config: DemoConfig): string {

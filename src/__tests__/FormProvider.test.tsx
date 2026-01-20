@@ -145,24 +145,7 @@ describe('FormLabel', () => {
     expect(label.textContent).not.toContain('*');
   });
 
-  it('should apply custom className', () => {
-    render(
-      <TestForm>
-        <FormField
-          name="testField"
-          render={() => (
-            <FormItem>
-              <FormLabel className="custom-label">Label</FormLabel>
-            </FormItem>
-          )}
-        />
-      </TestForm>
-    );
-
-    expect(screen.getByText('Label')).toHaveClass('custom-label');
-  });
-
-  it('should apply default snow-form-label class', () => {
+  it('should apply default snow-form-label class from registered component', () => {
     render(
       <TestForm>
         <FormField
@@ -176,6 +159,7 @@ describe('FormLabel', () => {
       </TestForm>
     );
 
+    // The registered component (DEFAULT_FORM_UI.label) applies its own classes
     expect(screen.getByText('Label')).toHaveClass('snow-form-label');
   });
 
@@ -232,24 +216,7 @@ describe('FormDescription', () => {
     expect(screen.getByText('Help text here')).toBeInTheDocument();
   });
 
-  it('should apply custom className', () => {
-    render(
-      <TestForm>
-        <FormField
-          name="testField"
-          render={() => (
-            <FormItem>
-              <FormDescription className="custom-desc">Description</FormDescription>
-            </FormItem>
-          )}
-        />
-      </TestForm>
-    );
-
-    expect(screen.getByText('Description')).toHaveClass('custom-desc');
-  });
-
-  it('should apply default snow-form-description class', () => {
+  it('should apply default snow-form-description class from registered component', () => {
     render(
       <TestForm>
         <FormField
@@ -263,6 +230,7 @@ describe('FormDescription', () => {
       </TestForm>
     );
 
+    // The registered component (DEFAULT_FORM_UI.description) applies its own classes
     expect(screen.getByText('Description')).toHaveClass('snow-form-description');
   });
 });

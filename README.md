@@ -16,9 +16,8 @@ Automatic form generation from Zod schemas with react-hook-form.
 - **Zero runtime dependencies** - Only peer dependencies (React, Zod, RHF)
 - **Automatic field type detection** - Maps Zod types to form inputs
 - **Schema refinements** - Full support for `refine()` and `superRefine()` cross-field validation
-- **Extensible component registry** - Replace any component with your own
+- **Extensible component registry** - Replace any component with your own (inputs, layout, submit button)
 - **Translation support** - i18next, next-intl, or any translation function
-- **CSS Variables** - Easy theming with `--snow-*` CSS variables
 - **Children pattern** - Full control over layout when needed
 - **TypeScript first** - Full type inference from Zod schemas
 
@@ -36,49 +35,117 @@ npm install react-hook-form zod @hookform/resolvers
 
 ## Quick Start
 
-### 1a. Quick setup
+### Option 1: With Custom Components (Recommended)
+
+For full control, register your own components. **No CSS import needed** - your components handle their own styling.
 
 ```tsx
 // Run once at app startup (e.g., app/setup.ts, _app.tsx, main.tsx)
 import { setupSnowForm } from '@snowpact/react-rhf-zod-form';
-import '@snowpact/react-rhf-zod-form/styles.css';
+import type { RegisteredComponentProps, FormUILabelProps } from '@snowpact/react-rhf-zod-form';
+
+// Example custom input component
+function MyInput({ value, onChange, placeholder, disabled, className }: RegisteredComponentProps<string>) {
+  return (
+    <input
+      type="text"
+      value={value ?? ''}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      disabled={disabled}
+      className={`my-input ${className ?? ''}`}
+    />
+  );
+}
+
+// Example custom label component
+function MyLabel({ children, required, invalid, htmlFor }: FormUILabelProps) {
+  return (
+    <label htmlFor={htmlFor} className={`my-label ${invalid ? 'my-label-error' : ''}`}>
+      {children}
+      {required && <span className="text-red-500 ml-1">*</span>}
+    </label>
+  );
+}
 
 setupSnowForm({
-  // Translation function (i18next.t, next-intl t, or identity)
   translate: (key) => key,
-
-  // Custom translations (optional)
-  translations: {
-    'snowForm.submit': 'Submit',
-    'snowForm.submitting': 'Submitting...',
-    'snowForm.required': 'Required',
-    'snowForm.selectPlaceholder': 'Select...',
+  components: {
+    text: MyInput,
+    email: (props) => <MyInput {...props} type="email" />,
+    password: (props) => <MyInput {...props} type="password" />,
+    // ... other components
   },
-
-  // Scroll to first error on validation failure (optional)
-  onError: (formRef, errors) => {
-    const firstErrorField = Object.keys(errors)[0];
-    if (firstErrorField) {
-      const element = formRef?.querySelector(`[name="${firstErrorField}"]`);
-      element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+  formUI: {
+    label: MyLabel,
+    description: ({ children }) => <p className="my-description">{children}</p>,
+    errorMessage: ({ message }) => <p className="my-error">{message}</p>,
   },
+  submitButton: ({ loading, disabled, children }) => (
+    <button type="submit" disabled={disabled || loading} className="my-button">
+      {loading ? 'Loading...' : children}
+    </button>
+  ),
 });
 ```
 
-### 1b. With custom components (optional)
+### Option 2: With Default Components (Quick Start)
+
+Use SnowForm's built-in components for quick prototyping. **Requires CSS import.**
+
+```tsx
+import {
+  setupSnowForm,
+  DEFAULT_COMPONENTS,
+  DEFAULT_FORM_UI,
+  DEFAULT_SUBMIT_BUTTON,
+} from '@snowpact/react-rhf-zod-form';
+import '@snowpact/react-rhf-zod-form/styles.css'; // Required for default components
+
+setupSnowForm({
+  translate: (key) => key,
+  components: DEFAULT_COMPONENTS,
+  formUI: DEFAULT_FORM_UI,
+  submitButton: DEFAULT_SUBMIT_BUTTON,
+});
+```
+
+### Option 3: Mix & Match
+
+Extend default components with your own. **Requires CSS import for defaults.**
+
+```tsx
+import {
+  setupSnowForm,
+  DEFAULT_COMPONENTS,
+  DEFAULT_FORM_UI,
+} from '@snowpact/react-rhf-zod-form';
+import '@snowpact/react-rhf-zod-form/styles.css';
+
+setupSnowForm({
+  translate: (key) => key,
+  components: {
+    ...DEFAULT_COMPONENTS,
+    text: MyCustomInput, // Override just this one
+  },
+  formUI: DEFAULT_FORM_UI,
+  submitButton: MyCustomButton,
+});
+```
+
+### Full Custom Components Example
 
 ```tsx
 // Run once at app startup (e.g., app/setup.ts, _app.tsx, main.tsx)
 import { setupSnowForm } from '@snowpact/react-rhf-zod-form';
 import '@snowpact/react-rhf-zod-form/styles.css';
-import { Input, Select, Button, Spinner } from '@/components/ui';
+import { Input, Select, Button, Spinner, Label, FormMessage } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
 setupSnowForm({
   translate: (key) => key,
 
-  // Register custom UI components globally
+  // Register custom input components globally
   components: {
     text: ({ value, onChange, placeholder, disabled, error, className }) => (
       <Input
@@ -101,6 +168,22 @@ setupSnowForm({
     ),
   },
 
+  // Register custom form UI components (label, description, error message)
+  formUI: {
+    label: ({ children, required, invalid, htmlFor }) => (
+      <Label htmlFor={htmlFor} className={cn(invalid && 'text-red-500')}>
+        {children}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </Label>
+    ),
+    description: ({ children }) => (
+      <p className="text-sm text-muted-foreground">{children}</p>
+    ),
+    errorMessage: ({ message }) => (
+      <FormMessage>{message}</FormMessage>
+    ),
+  },
+
   // Custom submit button
   submitButton: ({ loading, disabled, children, className }) => (
     <Button type="submit" disabled={disabled || loading} className={className}>
@@ -115,18 +198,7 @@ setupSnowForm({
 });
 ```
 
-### 2. Custom theme (optional)
-
-Customize the look by overriding CSS variables:
-
-```css
-:root {
-  --snow-input-active-ring: #8b5cf6;
-  --snow-input-radius: 0.5rem;
-}
-```
-
-### 3. Use SnowForm
+### 2. Use SnowForm
 
 ```tsx
 import { SnowForm } from '@snowpact/react-rhf-zod-form';
@@ -210,10 +282,17 @@ setupSnowForm({
     'snowForm.selectPlaceholder': 'Select...',
   },
 
-  // Optional: Custom components
+  // Optional: Custom input components
   components: {
     text: MyInput,
     select: MySelect,
+  },
+
+  // Optional: Custom form UI components (label, description, error message)
+  formUI: {
+    label: MyLabel,
+    description: MyDescription,
+    errorMessage: MyErrorMessage,
   },
 
   // Optional: Custom submit button
@@ -257,54 +336,42 @@ function SetupProvider({ children }) {
 
 ## Styling
 
-### Importing Styles
+### Using Default Components
+
+When using `DEFAULT_COMPONENTS`, `DEFAULT_FORM_UI`, or `DEFAULT_SUBMIT_BUTTON`, you **must** import the CSS:
 
 ```tsx
 import '@snowpact/react-rhf-zod-form/styles.css';
 ```
 
-### CSS Variables
+This provides basic styling. The styles are minimal and work out of the box.
 
-Customize the form appearance by overriding CSS variables:
+### Using Custom Components (No CSS needed)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `--snow-input-background` | Input background color | `#ffffff` |
-| `--snow-input-foreground` | Text color for labels and inputs | `#0a0a0a` |
-| `--snow-input-placeholder` | Placeholder and description text | `#9ca3af` |
-| `--snow-input-border` | Input border color | `#e5e5e5` |
-| `--snow-input-active-ring` | Focus ring color | `#3b82f6` |
-| `--snow-input-disabled-background` | Disabled input background | `#f5f5f5` |
-| `--snow-input-radius` | Border radius | `0.375rem` |
-| `--snow-input-error` | Error text and border color | `#ef4444` |
-| `--snow-form-submit-btn-background` | Submit button background | `#3b82f6` |
+When you register your own components, **no CSS import is needed**. Your components handle their own styling. This is the recommended approach as it allows you to use your own design system without any CSS override gymnastics.
 
-#### Example: Custom Theme
-
-```css
-:root {
-  --snow-input-active-ring: #8b5cf6;
-  --snow-form-submit-btn-background: #8b5cf6;
-  --snow-input-radius: 0.5rem;
-}
+```tsx
+// No CSS import needed!
+setupSnowForm({
+  translate: (key) => key,
+  components: {
+    text: MyInput,
+    select: MySelect,
+    textarea: MyTextarea,
+    checkbox: MyCheckbox,
+  },
+  formUI: {
+    label: MyLabel,
+    description: MyDescription,
+    errorMessage: MyErrorMessage,
+  },
+  submitButton: MyButton,
+});
 ```
 
-#### Example: Dark Mode
+### CSS Classes (for Default Styles)
 
-```css
-.dark {
-  --snow-input-background: #1a1a2e;
-  --snow-input-foreground: #eaeaea;
-  --snow-input-placeholder: #6b7280;
-  --snow-input-border: #0f3460;
-  --snow-input-disabled-background: #16213e;
-  --snow-input-error: #f87171;
-}
-```
-
-### CSS Classes
-
-The library uses semantic class names for custom styling:
+If using the default styles, these class names are available for additional customization:
 
 | Class | Description |
 |-------|-------------|
@@ -533,13 +600,24 @@ interface SnowFormProps<TSchema, TResponse = unknown> {
 | ------------------------------------ | ---------------------------------------------- |
 | `setupSnowForm(options)`             | Initialize SnowForm (call once at app startup) |
 | `resetSnowForm()`                    | Reset all registries (mainly for testing)      |
-| `registerComponents(map)`            | Register multiple components                   |
-| `registerComponent(type, component)` | Register single component                      |
+| `registerComponents(map)`            | Register multiple input components             |
+| `registerComponent(type, component)` | Register single input component                |
+| `registerFormUI(components)`         | Register form UI components (label, etc.)      |
 | `registerSubmitButton(component)`    | Register submit button                         |
 | `setTranslationFunction(fn)`         | Set translation function                       |
 | `setTranslations(map)`               | Set custom translations                        |
 | `setOnErrorBehavior(callback)`       | Set error behavior                             |
 | `normalizeDateToISO(date)`           | Convert date to ISO string                     |
+
+### Exported Constants
+
+| Constant                | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `DEFAULT_COMPONENTS`    | Default input components (text, select, checkbox, etc.)  |
+| `DEFAULT_FORM_UI`       | Default form UI components (label, description, error)   |
+| `DEFAULT_SUBMIT_BUTTON` | Default submit button component                          |
+
+> **Note:** When using these constants, import `@snowpact/react-rhf-zod-form/styles.css`.
 
 ### Exported Types
 
@@ -555,6 +633,11 @@ import type {
   SetupSnowFormOptions,
   TranslationFunction,
   OnErrorBehavior,
+  // Form UI types
+  FormUIComponents,
+  FormUILabelProps,
+  FormUIDescriptionProps,
+  FormUIErrorMessageProps,
 } from '@snowpact/react-rhf-zod-form';
 ```
 
@@ -612,9 +695,10 @@ setupSnowForm({
 ### Breaking Changes
 
 1. **`setTranslationHook()` removed** - Use `setupSnowForm({ translate: fn })` with a function instead of a hook
-2. **`registerFormUIStyles()` removed** - Import `@snowpact/react-rhf-zod-form/styles.css` and customize via CSS variables
-3. **`registerComponents()` moved** - Use `setupSnowForm({ components: {...} })` or continue using `registerComponents()` directly
-4. **`setOnErrorBehavior()` moved** - Use `setupSnowForm({ onError: fn })` or continue using `setOnErrorBehavior()` directly
+2. **`registerFormUIStyles()` removed** - Import `@snowpact/react-rhf-zod-form/styles.css` or register custom components via `formUI`
+3. **CSS Variables removed** - Default styles now use hardcoded values. For customization, register your own components via `setupSnowForm({ formUI: {...} })`
+4. **`registerComponents()` moved** - Use `setupSnowForm({ components: {...} })` or continue using `registerComponents()` directly
+5. **`setOnErrorBehavior()` moved** - Use `setupSnowForm({ onError: fn })` or continue using `setOnErrorBehavior()` directly
 
 ## License
 

@@ -6,7 +6,7 @@ import { useEffect, type ReactNode } from 'react';
 
 import { SnowFormField } from '../SnowFormField';
 import { Form, FormField } from '../FormProvider';
-import { registerComponent } from '../registry/componentRegistry';
+import { clearRegistry, registerComponent, registerFormUI } from '../registry/componentRegistry';
 import { setTranslationFunction } from '../registry/translationRegistry';
 import type { SchemaFieldInfo } from '../types';
 
@@ -473,6 +473,66 @@ describe('SnowFormField', () => {
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('No component registered for type'));
 
       consoleSpy.mockRestore();
+    });
+  });
+
+  // ===========================================================================
+  // Partial Registration (user only registers some components)
+  // ===========================================================================
+
+  describe('Partial Component Registration', () => {
+    it('should not crash when user registers partial components and uses unregistered type', () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // Clear the registry to simulate a user who only registers some components
+      clearRegistry();
+
+      // User only registered 'text', not 'color'
+      registerComponent('text', ({ value, onChange }) => (
+        <input value={String(value ?? '')} onChange={e => onChange(e.target.value)} data-testid="custom-text" />
+      ));
+
+      // Register formUI so labels work
+      registerFormUI({
+        label: ({ children, htmlFor }) => <label htmlFor={htmlFor}>{children}</label>,
+        description: ({ children }) => <p>{children}</p>,
+        errorMessage: ({ message }) => <p role="alert">{message}</p>,
+      });
+
+      // Try to render a 'color' field - should warn but not crash
+      const { container } = renderSnowFormField({
+        fieldInfo: { baseType: 'string', isOptional: false, isEmail: false },
+        override: { type: 'color' },
+      });
+
+      // Should have warned about missing component
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('No component registered for type "color"')
+      );
+
+      // Should not have rendered the field (returns null)
+      expect(container.querySelector('input[type="color"]')).not.toBeInTheDocument();
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should render correctly when registered component exists', () => {
+      // Register a custom text component
+      registerComponent('text', ({ value, onChange, name }) => (
+        <input
+          id={name}
+          value={String(value ?? '')}
+          onChange={e => onChange(e.target.value)}
+          data-testid="my-custom-input"
+        />
+      ));
+
+      renderSnowFormField({
+        fieldInfo: { baseType: 'string', isOptional: false, isEmail: false },
+      });
+
+      // Should render the custom component
+      expect(screen.getByTestId('my-custom-input')).toBeInTheDocument();
     });
   });
 });

@@ -252,7 +252,7 @@ export function CustomSubmitButton({ loading, disabled, children, className }: S
 // Custom Components Map (for setupSnowForm)
 // =============================================================================
 
-export const CUSTOM_COMPONENTS = {
+export const CUSTOM_COMPONENTS: Record<string, RegisterableComponent> = {
   text: CustomInput,
   email: (props: RegisteredComponentProps<string>) => <CustomInput {...props} type="email" />,
   password: (props: RegisteredComponentProps<string>) => <CustomInput {...props} type="password" />,

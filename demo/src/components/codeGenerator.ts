@@ -148,6 +148,7 @@ const schema = z.object({
   age: z.number().min(18, 'Must be at least 18'),
   bio: z.string().optional(),
   role: z.enum(['admin', 'user', 'guest']),
+  satisfaction: z.number().min(1).max(5).optional(),
   acceptTerms: z.boolean().refine(val => val === true, 'Required'),
 });
 
@@ -176,6 +177,23 @@ function MyForm() {
             { value: 'user', label: 'User' },
             { value: 'guest', label: 'Guest' },
           ],
+        },
+        satisfaction: {
+          label: 'Satisfaction',
+          render: ({ value, onChange }) => (
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => onChange(star)}
+                  className={value >= star ? 'text-yellow-400' : 'text-gray-300'}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+          ),
         },
         acceptTerms: { label: 'I accept the terms' },
       }}

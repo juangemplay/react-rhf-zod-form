@@ -133,71 +133,6 @@ setupSnowForm({
 });
 ```
 
-### Full Custom Components Example
-
-```tsx
-// Run once at app startup (e.g., app/setup.ts, _app.tsx, main.tsx)
-import { setupSnowForm } from '@snowpact/react-rhf-zod-form';
-import '@snowpact/react-rhf-zod-form/styles.css';
-import { Input, Select, Button, Spinner, Label, FormMessage } from '@/components/ui';
-import { cn } from '@/lib/utils';
-
-setupSnowForm({
-  translate: (key) => key,
-
-  // Register custom input components globally
-  components: {
-    text: ({ value, onChange, placeholder, disabled, error, className }) => (
-      <Input
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={cn(className, error && 'border-red-500')}
-      />
-    ),
-    select: ({ value, onChange, options, placeholder, disabled }) => (
-      <Select value={value} onValueChange={onChange} disabled={disabled}>
-        {placeholder && <Select.Item value="">{placeholder}</Select.Item>}
-        {options?.map((opt) => (
-          <Select.Item key={opt.value} value={opt.value}>
-            {opt.label}
-          </Select.Item>
-        ))}
-      </Select>
-    ),
-  },
-
-  // Register custom form UI components (label, description, error message)
-  formUI: {
-    label: ({ children, required, invalid, htmlFor }) => (
-      <Label htmlFor={htmlFor} className={cn(invalid && 'text-red-500')}>
-        {children}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </Label>
-    ),
-    description: ({ children }) => (
-      <p className="text-sm text-muted-foreground">{children}</p>
-    ),
-    errorMessage: ({ message }) => (
-      <FormMessage>{message}</FormMessage>
-    ),
-  },
-
-  // Custom submit button
-  submitButton: ({ loading, disabled, children, className }) => (
-    <Button type="submit" disabled={disabled || loading} className={className}>
-      {loading ? <Spinner className="mr-2" /> : null}
-      {children}
-    </Button>
-  ),
-
-  onError: (formRef) => {
-    formRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  },
-});
-```
-
 ### 2. Use SnowForm
 
 ```tsx
@@ -260,50 +195,7 @@ function MyForm() {
 | `hidden`         | Hidden input                        |
 | *custom*         | Any custom type you register        |
 
-## Setup API
-
-### setupSnowForm()
-
-Initialize SnowForm once at app startup:
-
-```tsx
-import { setupSnowForm } from '@snowpact/react-rhf-zod-form';
-import '@snowpact/react-rhf-zod-form/styles.css';
-
-setupSnowForm({
-  // Required: Translation function
-  translate: (key) => key,
-
-  // Optional: Custom translations
-  translations: {
-    'snowForm.submit': 'Submit',
-    'snowForm.submitting': 'Submitting...',
-    'snowForm.required': 'Required',
-    'snowForm.selectPlaceholder': 'Select...',
-  },
-
-  // Optional: Custom input components
-  components: {
-    text: MyInput,
-    select: MySelect,
-  },
-
-  // Optional: Custom form UI components (label, description, error message)
-  formUI: {
-    label: MyLabel,
-    description: MyDescription,
-    errorMessage: MyErrorMessage,
-  },
-
-  // Optional: Custom submit button
-  submitButton: MyButton,
-
-  // Optional: Error behavior
-  onError: (formRef, errors) => {
-    formRef?.scrollIntoView({ behavior: 'smooth' });
-  },
-});
-```
+## Translations
 
 ### With i18next
 
@@ -500,6 +392,66 @@ The render function receives:
 - `onChange(newValue)` - Function to update the value
 - `error` - Validation error message (if any)
 
+### Adding New Field Types
+
+You can register entirely new field types (like `rating`, `rich-text`, `color-picker`, etc.) that don't exist in the built-in types:
+
+**1. Declare the new type** (for TypeScript support):
+
+```typescript
+// src/types/snow-form.d.ts
+declare global {
+  interface SnowFormCustomTypes {
+    'rating': true;
+    'rich-text': true;
+  }
+}
+export {};
+```
+
+**2. Register the component**:
+
+```tsx
+setupSnowForm({
+  translate: (key) => key,
+  components: {
+    // Built-in types
+    text: MyInput,
+    select: MySelect,
+
+    // Your custom types
+    'rating': ({ value, onChange, name }) => (
+      <StarRating
+        id={name}
+        value={value ?? 0}
+        onChange={onChange}
+        max={5}
+      />
+    ),
+    'rich-text': ({ value, onChange, name }) => (
+      <RichTextEditor
+        id={name}
+        content={value}
+        onChange={onChange}
+      />
+    ),
+  },
+  // ...
+});
+```
+
+**3. Use in your schema**:
+
+```tsx
+<SnowForm
+  schema={schema}
+  overrides={{
+    rating: { type: 'rating', label: 'Your Rating' },
+    content: { type: 'rich-text', label: 'Article Content' },
+  }}
+/>
+```
+
 ## Children Pattern
 
 For full layout control, use the children render pattern:
@@ -523,55 +475,6 @@ For full layout control, use the children render pattern:
     </div>
   )}
 </SnowForm>
-```
-
-## Custom Components
-
-Register your own components via `setupSnowForm()` or the individual registration functions.
-
-```tsx
-import { setupSnowForm } from '@snowpact/react-rhf-zod-form';
-import { Input, Button, Select } from '@/components/ui';
-
-setupSnowForm({
-  translate: (key) => key,
-
-  components: {
-    text: ({ value, onChange, placeholder, disabled, className }) => (
-      <Input
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={className}
-      />
-    ),
-    select: ({ value, onChange, options, placeholder, disabled }) => (
-      <Select
-        value={value}
-        onValueChange={onChange}
-        disabled={disabled}
-      >
-        {placeholder && <Select.Item value="">{placeholder}</Select.Item>}
-        {options?.map((opt) => (
-          <Select.Item key={opt.value} value={opt.value}>
-            {opt.label}
-          </Select.Item>
-        ))}
-      </Select>
-    ),
-  },
-
-  submitButton: ({ loading, disabled, children, className }) => (
-    <Button
-      type="submit"
-      disabled={disabled || loading}
-      className={className}
-    >
-      {loading ? <Spinner /> : children}
-    </Button>
-  ),
-});
 ```
 
 ## API Reference

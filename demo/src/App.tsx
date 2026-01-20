@@ -71,6 +71,8 @@ const schema = z.object({
   bio: z.string().optional(),
   // Select (enum)
   role: z.enum(['admin', 'user', 'guest']),
+  // Custom field type: rating (only shown in custom mode)
+  satisfaction: z.number().min(1).max(5).optional(),
   // Checkbox
   acceptTerms: z.boolean().refine(val => val === true, 'You must accept the terms'),
 });
@@ -187,6 +189,28 @@ export function App() {
             { value: 'guest', label: 'Guest' },
           ],
         },
+        satisfaction: {
+          label: 'Satisfaction Rating',
+          description: 'Custom component via render override',
+          render: ({ value, onChange }: { value: number; onChange: (v: number) => void }) => (
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => onChange(star)}
+                  className={`text-2xl transition-colors ${
+                    (value ?? 0) >= star
+                      ? 'text-yellow-400 hover:text-yellow-500'
+                      : 'text-gray-300 hover:text-gray-400'
+                  }`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+          ),
+        },
         acceptTerms: {
           label: 'I accept the terms and conditions',
           type: 'checkbox' as const,
@@ -210,6 +234,7 @@ export function App() {
                 <div>{renderField('role')}</div>
               </div>
               {renderField('bio')}
+              {renderField('satisfaction')}
               {renderField('acceptTerms')}
               <div className="pt-4">{renderSubmitButton({ children: 'Create Account' })}</div>
             </div>

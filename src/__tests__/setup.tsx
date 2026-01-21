@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom/vitest';
-import React from 'react';
 import { beforeEach } from 'vitest';
 import type { RegisteredComponentProps, SubmitButtonProps, FormUILabelProps, FormUIDescriptionProps, FormUIErrorMessageProps } from '../types';
 import { resetSnowForm, setupSnowForm } from '../registry';
@@ -69,7 +68,7 @@ const TestNumberInput = ({ value, onChange, onBlur, name, disabled, className, e
     name={name}
     type="number"
     value={value ?? ''}
-    onChange={e => onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+    onChange={e => onChange((e.target.value === '' ? undefined : Number(e.target.value)) as number)}
     onBlur={onBlur}
     disabled={disabled}
     className={cn('snow-input', error && 'snow-input-error', className)}

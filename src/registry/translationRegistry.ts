@@ -23,14 +23,29 @@ const defaultTranslations: Record<string, string> = {
 let customTranslateFn: TranslationFunction | null = null;
 
 /**
- * Translate a key using custom function or fallback to defaults
+ * Custom static translations (set via setupSnowForm)
+ */
+let customTranslations: Record<string, string> = {};
+
+/**
+ * Translate a key:
+ * 1. Check custom static translations first (highest priority)
+ * 2. Then try the translate function (for dynamic keys like field labels)
+ * 3. Finally fall back to built-in defaults
  */
 const translate = (key: string): string => {
+  // 1. Check custom static translations first
+  if (key in customTranslations) {
+    return customTranslations[key];
+  }
+
+  // 2. Try custom translate function
   if (customTranslateFn) {
     const result = customTranslateFn(key);
-    // If custom function returns the key unchanged, try defaults
     if (result !== key) return result;
   }
+
+  // 3. Fall back to built-in defaults
   return defaultTranslations[key] ?? key;
 };
 
@@ -57,10 +72,11 @@ export function setTranslationFunction(fn: TranslationFunction): void {
 }
 
 /**
- * Set custom translations to merge with defaults.
+ * Set custom static translations (highest priority).
+ * These take precedence over both the translate function and built-in defaults.
  * Called internally by setupSnowForm.
  *
- * @param translations - Partial translations to merge
+ * @param translations - Static translations to set
  *
  * @example
  * ```typescript
@@ -70,8 +86,8 @@ export function setTranslationFunction(fn: TranslationFunction): void {
  * });
  * ```
  */
-export function setTranslations(translations: Partial<typeof defaultTranslations>): void {
-  Object.assign(defaultTranslations, translations);
+export function setTranslations(translations: Record<string, string>): void {
+  customTranslations = { ...translations };
 }
 
 /**
@@ -102,14 +118,5 @@ export function getTranslationKeys(): string[] {
  */
 export function resetTranslationRegistry(): void {
   customTranslateFn = null;
-  // Reset to original defaults
-  Object.keys(defaultTranslations).forEach(key => {
-    delete defaultTranslations[key];
-  });
-  Object.assign(defaultTranslations, {
-    'snowForm.submit': 'Submit',
-    'snowForm.submitting': 'Submitting...',
-    'snowForm.required': 'Required',
-    'snowForm.selectPlaceholder': 'Select...',
-  });
+  customTranslations = {};
 }

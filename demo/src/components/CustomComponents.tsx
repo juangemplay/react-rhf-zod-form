@@ -5,6 +5,7 @@ import type {
   FormUIErrorMessageProps,
   SubmitButtonProps,
   FieldOption,
+  RegisterableComponent,
 } from '../../../src';
 
 // =============================================================================

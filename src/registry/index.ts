@@ -18,9 +18,7 @@ import {
 
 import {
   setTranslationFunction,
-  setTranslations,
   getT,
-  getTranslationKeys,
   resetTranslationRegistry,
   type TranslationFunction,
 } from './translationRegistry';
@@ -48,22 +46,13 @@ import {
 // =============================================================================
 
 /**
- * Default translation keys available in SnowForm
- */
-export interface SnowFormTranslationKeys {
-  'snowForm.submit': string;
-  'snowForm.submitting': string;
-  'snowForm.required': string;
-  'snowForm.selectPlaceholder': string;
-}
-
-/**
  * Options for setupSnowForm
  */
 export interface SetupSnowFormOptions {
   /**
    * Translation function (required)
-   * Can be i18next's t, next-intl's t, or any (key: string) => string function
+   * Can be i18next's t, next-intl's t, or any (key: string) => string function.
+   * Keys like 'submit' are passed directly to this function.
    *
    * @example Using i18next
    * ```typescript
@@ -78,23 +67,6 @@ export interface SetupSnowFormOptions {
    * ```
    */
   translate: TranslationFunction;
-
-  /**
-   * Custom translations to merge with defaults (optional)
-   * Useful for overriding default English strings without a full i18n setup
-   *
-   * @example
-   * ```typescript
-   * setupSnowForm({
-   *   translate: (key) => key,
-   *   translations: {
-   *     'snowForm.submit': 'Envoyer',
-   *     'snowForm.submitting': 'Envoi en cours...',
-   *   },
-   * });
-   * ```
-   */
-  translations?: Partial<SnowFormTranslationKeys>;
 
   /**
    * Custom components to register
@@ -239,10 +211,6 @@ let isSetup = false;
  *
  * setupSnowForm({
  *   translate: t,
- *   translations: {
- *     'snowForm.submit': 'Send',
- *     'snowForm.submitting': 'Sending...',
- *   },
  *   components: {
  *     text: MyInput,
  *     select: MySelect,
@@ -263,11 +231,6 @@ export function setupSnowForm(options: SetupSnowFormOptions): void {
 
   // Set translation function (required)
   setTranslationFunction(options.translate);
-
-  // Set custom translations (optional)
-  if (options.translations) {
-    setTranslations(options.translations);
-  }
 
   // Register components (optional)
   if (options.components) {
@@ -342,9 +305,7 @@ export {
 // Translation registry
 export {
   setTranslationFunction,
-  setTranslations,
   getT,
-  getTranslationKeys,
   resetTranslationRegistry,
   type TranslationFunction,
 };

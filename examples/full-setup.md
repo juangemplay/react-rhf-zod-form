@@ -18,15 +18,10 @@ This guide shows how to configure SnowForm with your UI library.
 Create a setup file (e.g., `src/lib/snow-form-setup.ts`) that configures SnowForm with your components:
 
 ```tsx
-import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import {
-  registerComponents,
-  registerSubmitButton,
-  setTranslationHook,
-  setOnErrorBehavior,
-  registerFormUIStyles,
+  setupSnowForm,
   normalizeDateToISO,
 } from '@snowpact/react-rhf-zod-form';
 import type { RegisteredComponentProps, SubmitButtonProps } from '@snowpact/react-rhf-zod-form';
@@ -36,6 +31,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+import i18n from '@/i18n';
 
 // =============================================================================
 // Component Adapters
@@ -102,7 +99,7 @@ function ShadcnSelect({
   return (
     <Select value={value ?? ''} onValueChange={val => onChange(val || undefined)} disabled={disabled}>
       <SelectTrigger id={name}>
-        <SelectValue placeholder={placeholder} />
+        <SelectValue placeholder={placeholder ?? '----'} />
       </SelectTrigger>
       <SelectContent>
         {options?.map(opt => (
@@ -184,16 +181,15 @@ function ShadcnSubmitButton({ loading, disabled, children, className }: SubmitBu
 }
 
 // =============================================================================
-// Setup Function
+// Setup
 // =============================================================================
 
-let isSetup = false;
-
-export function setupSnowForm(): void {
-  if (isSetup) return;
+setupSnowForm({
+  // Translation function - receives keys like 'submit', 'email', 'firstName', etc.
+  translate: (key) => i18n.t(key),
 
   // Register Shadcn components
-  registerComponents({
+  components: {
     text: ShadcnInput,
     email: props => <ShadcnInput {...props} componentProps={{ type: 'email' }} />,
     password: props => <ShadcnInput {...props} componentProps={{ type: 'password' }} />,
@@ -202,54 +198,35 @@ export function setupSnowForm(): void {
     checkbox: ShadcnSwitch,
     number: NumberInputAdapter,
     date: DatePickerAdapter,
-    // Custom business components:
-    // 'rich-text': RichTextEditorAdapter,
-    // 'media-library': MediaLibraryAdapter,
-  });
+  },
 
   // Register submit button
-  registerSubmitButton(ShadcnSubmitButton);
+  submitButton: ShadcnSubmitButton,
 
-  // Register form UI styles (Tailwind)
-  registerFormUIStyles({
+  // CSS classes for form layout (Tailwind)
+  styles: {
     form: 'space-y-6 w-full',
     formItem: 'grid gap-2',
-    formLabel: 'text-sm font-medium leading-none',
-    formLabelError: 'text-destructive',
-    formDescription: 'text-sm text-muted-foreground',
-    formMessage: 'text-sm text-destructive',
-    submitButton: 'w-full',
-  });
+    label: 'text-sm font-medium leading-none',
+    description: 'text-sm text-muted-foreground',
+    errorMessage: 'text-sm text-destructive',
+  },
 
-  // Register translation hook (i18next)
-  setTranslationHook(() => {
-    const { t } = useTranslation();
-    return {
-      t: (key: string) => {
-        if (key === 'submit') return t('common.submit');
-        if (key === 'loading') return t('common.loading');
-        return t(`form.${key}`);
-      },
-    };
-  });
-
-  // Register error behavior
-  setOnErrorBehavior(formRef => {
+  // Error behavior
+  onError: (formRef) => {
     if (formRef) {
       formRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     toast.error('Please fix the form errors');
-  });
-
-  isSetup = true;
-}
+  },
+});
 ```
 
 ---
 
 ## App.tsx Integration
 
-Call the setup function **once** at app startup, before your app renders:
+Call the setup **once** at app startup by importing the setup file:
 
 ```tsx
 // src/App.tsx
@@ -257,10 +234,8 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
-import { setupSnowForm } from '@/lib/snow-form-setup';
-
-// Initialize SnowForm before rendering
-setupSnowForm();
+// Initialize SnowForm (side effect import)
+import '@/lib/snow-form-setup';
 
 export function App() {
   return (
@@ -295,10 +270,13 @@ Then register the components and use them in overrides:
 
 ```tsx
 // In your setup file
-registerComponents({
-  // ... other components
-  'rich-text': RichTextEditorAdapter,
-  'media-library': MediaLibraryAdapter,
+setupSnowForm({
+  translate: (key) => i18n.t(key),
+  components: {
+    // ... other components
+    'rich-text': RichTextEditorAdapter,
+    'media-library': MediaLibraryAdapter,
+  },
 });
 
 // In your form
@@ -320,35 +298,25 @@ Example i18next translation structure:
 ```json
 // locales/en/translation.json
 {
-  "common": {
-    "submit": "Submit",
-    "loading": "Loading..."
-  },
-  "form": {
-    "email": "Email Address",
-    "password": "Password",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "bio": "Biography",
-    "website": "Website URL"
-  }
+  "submit": "Submit",
+  "email": "Email Address",
+  "password": "Password",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "bio": "Biography",
+  "website": "Website URL"
 }
 ```
 
 ```json
 // locales/fr/translation.json
 {
-  "common": {
-    "submit": "Envoyer",
-    "loading": "Chargement..."
-  },
-  "form": {
-    "email": "Adresse email",
-    "password": "Mot de passe",
-    "firstName": "Prénom",
-    "lastName": "Nom",
-    "bio": "Biographie",
-    "website": "Site web"
-  }
+  "submit": "Envoyer",
+  "email": "Adresse email",
+  "password": "Mot de passe",
+  "firstName": "Prénom",
+  "lastName": "Nom",
+  "bio": "Biographie",
+  "website": "Site web"
 }
 ```

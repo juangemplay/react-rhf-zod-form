@@ -518,7 +518,6 @@ interface SnowFormProps<TSchema, TResponse = unknown> {
 | `registerFormUI(components)`         | Register form UI components (label, etc.)      |
 | `registerSubmitButton(component)`    | Register submit button                         |
 | `setTranslationFunction(fn)`         | Set translation function                       |
-| `setTranslations(map)`               | Set custom translations                        |
 | `setOnErrorBehavior(callback)`       | Set error behavior                             |
 | `setFormStyles(styles)`              | Set CSS classes for form and formItem          |
 | `normalizeDateToISO(date)`           | Convert date to ISO string                     |

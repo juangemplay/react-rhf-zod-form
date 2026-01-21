@@ -13,7 +13,6 @@ export {
   resetSnowForm,
   isSnowFormSetup,
   type SetupSnowFormOptions,
-  type SnowFormTranslationKeys,
 } from './registry';
 
 // =============================================================================
@@ -29,7 +28,6 @@ export {
   registerFormUI,
   // Translation
   setTranslationFunction,
-  setTranslations,
   getT,
   // Behavior
   setOnErrorBehavior,

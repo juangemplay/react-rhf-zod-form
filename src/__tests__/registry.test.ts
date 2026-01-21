@@ -13,7 +13,6 @@ import {
   getT,
   resetTranslationRegistry,
   setTranslationFunction,
-  setTranslations,
 } from '../registry/translationRegistry';
 
 // =============================================================================
@@ -130,51 +129,27 @@ describe('translationRegistry', () => {
     expect(t('firstName')).toBe('firstName');
   });
 
-  it('should return default translations for known keys', () => {
+  it('should return key as-is when no translation function', () => {
     const t = getT();
 
-    expect(t('snowForm.submit')).toBe('Submit');
-    expect(t('snowForm.submitting')).toBe('Submitting...');
-    expect(t('snowForm.required')).toBe('Required');
-    expect(t('snowForm.selectPlaceholder')).toBe('Select...');
-  });
-
-  it('should allow setting custom translations', () => {
-    setTranslations({
-      'snowForm.submit': 'Envoyer',
-      'snowForm.submitting': 'Envoi en cours...',
-    });
-
-    const t = getT();
-
-    expect(t('snowForm.submit')).toBe('Envoyer');
-    expect(t('snowForm.submitting')).toBe('Envoi en cours...');
-    // Other defaults should remain
-    expect(t('snowForm.required')).toBe('Required');
+    expect(t('submit')).toBe('submit');
   });
 
   it('should reset translation registry', () => {
-    setTranslations({ 'snowForm.submit': 'Custom' });
+    setTranslationFunction(() => 'Custom');
     resetTranslationRegistry();
 
     const t = getT();
-    expect(t('snowForm.submit')).toBe('Submit'); // Back to default
+    expect(t('submit')).toBe('submit'); // Back to key as-is
   });
 
-  it('should prefer custom translation function over defaults', () => {
+  it('should use custom translation function', () => {
     setTranslationFunction((key: string) => {
-      if (key === 'snowForm.submit') return 'Send';
+      if (key === 'submit') return 'Envoyer';
       return key;
     });
 
     const t = getT();
-    expect(t('snowForm.submit')).toBe('Send');
-  });
-
-  it('should fallback to defaults when custom function returns the key unchanged', () => {
-    setTranslationFunction((key: string) => key);
-
-    const t = getT();
-    expect(t('snowForm.submit')).toBe('Submit'); // Falls back to default
+    expect(t('submit')).toBe('Envoyer');
   });
 });

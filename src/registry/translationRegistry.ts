@@ -8,45 +8,19 @@
 export type TranslationFunction = (key: string) => string;
 
 /**
- * Default translations (English)
- */
-const defaultTranslations: Record<string, string> = {
-  'snowForm.submit': 'Submit',
-  'snowForm.submitting': 'Submitting...',
-  'snowForm.required': 'Required',
-  'snowForm.selectPlaceholder': 'Select...',
-};
-
-/**
  * Custom translation function (set via setupSnowForm)
  */
 let customTranslateFn: TranslationFunction | null = null;
 
 /**
- * Custom static translations (set via setupSnowForm)
- */
-let customTranslations: Record<string, string> = {};
-
-/**
- * Translate a key:
- * 1. Check custom static translations first (highest priority)
- * 2. Then try the translate function (for dynamic keys like field labels)
- * 3. Finally fall back to built-in defaults
+ * Translate a key using the registered translate function.
+ * Returns the key as-is if no function registered or translation not found.
  */
 const translate = (key: string): string => {
-  // 1. Check custom static translations first
-  if (key in customTranslations) {
-    return customTranslations[key];
-  }
-
-  // 2. Try custom translate function
   if (customTranslateFn) {
-    const result = customTranslateFn(key);
-    if (result !== key) return result;
+    return customTranslateFn(key);
   }
-
-  // 3. Fall back to built-in defaults
-  return defaultTranslations[key] ?? key;
+  return key;
 };
 
 // =============================================================================
@@ -72,25 +46,6 @@ export function setTranslationFunction(fn: TranslationFunction): void {
 }
 
 /**
- * Set custom static translations (highest priority).
- * These take precedence over both the translate function and built-in defaults.
- * Called internally by setupSnowForm.
- *
- * @param translations - Static translations to set
- *
- * @example
- * ```typescript
- * setTranslations({
- *   'snowForm.submit': 'Envoyer',
- *   'snowForm.submitting': 'Envoi en cours...',
- * });
- * ```
- */
-export function setTranslations(translations: Record<string, string>): void {
-  customTranslations = { ...translations };
-}
-
-/**
  * Get the translate function.
  * Used internally by SnowForm components.
  *
@@ -98,15 +53,6 @@ export function setTranslations(translations: Record<string, string>): void {
  */
 export function getT(): TranslationFunction {
   return translate;
-}
-
-/**
- * Get all translation keys (useful for debugging)
- *
- * @returns Array of all translation keys
- */
-export function getTranslationKeys(): string[] {
-  return Object.keys(defaultTranslations);
 }
 
 // =============================================================================
@@ -118,5 +64,4 @@ export function getTranslationKeys(): string[] {
  */
 export function resetTranslationRegistry(): void {
   customTranslateFn = null;
-  customTranslations = {};
 }

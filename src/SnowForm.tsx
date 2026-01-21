@@ -263,7 +263,7 @@ export function SnowForm<TSchema extends ZodObjectOrEffects, TResponse = unknown
           disabled={isDisabled}
           className={cn('snow-form-submit-btn', options?.className)}
         >
-          {options?.children ?? t('snowForm.submit')}
+          {options?.children ?? t('submit')}
         </SubmitButton>
       );
     },

